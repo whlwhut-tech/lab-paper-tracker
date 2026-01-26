@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>课题组论文进度追踪系统</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{font-family:"Microsoft YaHei";background:#f5f7fa;padding:12px}
+h1{text-align:center;color:#1a5fb4}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{background:#fff;border-radius:10px;padding:10px;text-align:center}
+.legend span{padding:4px 10px;border-radius:6px;color:#fff;font-size:12px;margin-right:6px}
+.paper{background:#fff;border-radius:10px;padding:12px;margin-top:12px}
+.header{display:flex;justify-content:space-between;flex-wrap:wrap}
+.name{font-weight:700;color:#1a5fb4}
+.status{padding:4px 12px;border-radius:20px;color:#fff;cursor:pointer}
+.progress input{width:100%}
+.planning{background:#95a5a6}
+.writing{background:#3498db}
+.submitted{background:#f39c12}
+.review{background:#9b59b6}
+.published{background:#27ae60}
+</style>
+</head>
+
+<body>
+<h1>课题组论文进度追踪系统</h1>
+
+<div class="summary">
+ <div class="card">总论文数<br><b id="tp">0</b></div>
+ <div class="card">总学生数<br><b id="ts">0</b></div>
+ <div class="card">平均进度<br><b id="ap">0%</b></div>
+ <div class="card">已完成<br><b id="fc">0</b></div>
+</div>
+
+<div class="legend">
+ <span class="planning">规划中</span>
+ <span class="writing">撰写中</span>
+ <span class="submitted">已投稿</span>
+ <span class="review">审阅中</span>
+ <span class="published">已发表</span>
+</div>
+
+<div id="list"></div>
+
+<script>
+const SUPABASE_URL="https://你的项目.supabase.co";
+const SUPABASE_KEY="你的 anon public key";
+const supabase = supabaseJs.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const gradeOrder=["博士后","博五","博四","博三","博二","博一","研三","研二","研一"];
+const map=[
+ {n:"规划中",c:"planning",p:0},
+ {n:"撰写中",c:"writing",p:25},
+ {n:"已投稿",c:"submitted",p:50},
+ {n:"审阅中",c:"review",p:75},
+ {n:"已发表",c:"published",p:100}
+];
+
+async function load(){
+ const {data}=await supabase.from("papers").select("*");
+ window.papers=data||[];
+ render();
+}
+
+function render(){
+ list.innerHTML="";
+ papers
+ .sort((a,b)=>gradeOrder.indexOf(a.grade)-gradeOrder.indexOf(b.grade))
+ .forEach(p=>{
+  let s=map[p.status];
+  list.innerHTML+=`
+  <div class="paper">
+   <div class="header">
+    <div>
+     <div class="name">${p.name}（${p.grade}）</div>
+     论文：${p.title}<br>
+     期刊：${p.journal}<br>
+     拟投稿：${p.plan_time||""}
+    </div>
+    <div class="status ${s.c}" onclick="next('${p.id}',${p.status})">${s.n}</div>
+   </div>
+   <div class="progress">
+    <input type="range" min="0" max="100" step="25"
+     value="${s.p}" oninput="slide('${p.id}',this.value)">
+   </div>
+  </div>`;
+ });
+ stats();
+}
+
+function stats(){
+ tp.innerText=papers.length;
+ ts.innerText=[...new Set(papers.map(p=>p.name))].length;
+ ap.innerText=Math.round(papers.reduce((s,p)=>s+map[p.status].p,0)/(papers.length||1))+"%";
+ fc.innerText=papers.filter(p=>p.status>=2).length;
+}
+
+async function next(id,s){
+ await supabase.from("papers").update({status:(s+1)%5}).eq("id",id);
+ load();
+}
+async function slide(id,v){
+ await supabase.from("papers").update({status:v/25}).eq("id",id);
+}
+
+load();
+</script>
+</body>
+</html>
