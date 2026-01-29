@@ -1,152 +1,905 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>课题组论文进度追踪系统</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-body { font-family: "Segoe UI", sans-serif; background:#f4f6fb; margin:12px; }
-h1 { text-align:center; }
-
-.card { background:#fff; border-radius:12px; padding:12px; margin-bottom:12px; }
-.stats { display:flex; gap:10px; flex-wrap:wrap; }
-.stat { flex:1; background:#eef1ff; padding:10px; border-radius:10px; text-align:center; }
-
-table { width:100%; border-collapse:collapse; font-size:14px; }
-th, td { border-bottom:1px solid #ddd; padding:6px; text-align:center; }
-th { background:#fafafa; }
-
-input[type="text"] { width:100%; border:none; background:transparent; }
-input[type="range"] { width:100%; }
-
-select { border-radius:6px; }
-
-button { padding:6px 10px; border-radius:8px; border:none; background:#4f6ef7; color:#fff; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论文进度追踪系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9c 100%);
+            color: white;
+            padding: 25px 30px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        h1 i {
+            margin-right: 12px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .stats {
+            display: flex;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 15px 20px;
+            min-width: 160px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            padding: 20px 30px;
+            background-color: #f9fafc;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            min-width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #1a6dcc;
+            box-shadow: 0 0 0 2px rgba(26, 109, 204, 0.2);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        select {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 15px;
+            min-width: 150px;
+            cursor: pointer;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #1a6dcc;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: #f1f5f9;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #444;
+            font-size: 15px;
+            border-bottom: 2px solid #e1e8f0;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+        
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8fafd;
+        }
+        
+        .progress-cell {
+            min-width: 200px;
+        }
+        
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .progress-bar {
+            flex-grow: 1;
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: right;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .status-撰写中 {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-规划中 {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-已投稿 {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-审稿中 {
+            background-color: #e2d9f3;
+            color: #3d2a6d;
+        }
+        
+        .grade-tag {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .grade-博士后 { background-color: #e3f2fd; color: #1565c0; }
+        .grade-博五 { background-color: #f3e5f5; color: #7b1fa2; }
+        .grade-博四 { background-color: #e8f5e9; color: #2e7d32; }
+        .grade-博三 { background-color: #fff3e0; color: #ef6c00; }
+        .grade-博二 { background-color: #fce4ec; color: #c2185b; }
+        .grade-博一 { background-color: #e0f7fa; color: #006064; }
+        .grade-研三 { background-color: #f1f8e9; color: #558b2f; }
+        .grade-研二 { background-color: #fff8e1; color: #ff8f00; }
+        .grade-研一 { background-color: #f9fbe7; color: #afb42b; }
+        
+        .editable {
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+            padding: 2px 5px;
+            margin: -2px -5px;
+        }
+        
+        .editable:hover {
+            background-color: rgba(26, 109, 204, 0.1);
+        }
+        
+        .edit-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #1a6dcc;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .edit-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 109, 204, 0.2);
+        }
+        
+        .journal-cell, .title-cell {
+            max-width: 300px;
+            word-break: break-word;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .edit-btn {
+            color: #1a6dcc;
+            border: 1px solid #1a6dcc;
+        }
+        
+        .edit-btn:hover {
+            background-color: #1a6dcc;
+            color: white;
+        }
+        
+        .save-btn {
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+        
+        .save-btn:hover {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .cancel-btn {
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+        
+        .cancel-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        footer {
+            padding: 20px 30px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #eaeaea;
+            background-color: #f9fafc;
+        }
+        
+        @media (max-width: 1200px) {
+            .container {
+                border-radius: 0;
+                box-shadow: none;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            th, td {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box, select {
+                min-width: 100%;
+            }
+            
+            .stat-box {
+                flex: 1;
+                min-width: 120px;
+            }
+            
+            .progress-cell {
+                min-width: 150px;
+            }
+        }
+        
+        .edit-notice {
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            margin: 0 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+            border-left: 4px solid #1a6dcc;
+        }
+    </style>
 </head>
-
 <body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-tasks"></i> 论文进度追踪系统</h1>
+            <p class="subtitle">课题组论文投稿计划与进度管理</p>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number">34</div>
+                    <div class="stat-label">总论文数</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">已投稿</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">撰写中</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">审稿中</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">22</div>
+                    <div class="stat-label">规划中</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索姓名、论文题目、期刊...">
+            </div>
+            
+            <div class="filter-options">
+                <select id="gradeFilter">
+                    <option value="">全部年级</option>
+                    <option value="博士后">博士后</option>
+                    <option value="博五">博五</option>
+                    <option value="博四">博四</option>
+                    <option value="博三">博三</option>
+                    <option value="博二">博二</option>
+                    <option value="博一">博一</option>
+                    <option value="研三">研三</option>
+                    <option value="研二">研二</option>
+                    <option value="研一">研一</option>
+                </select>
+                
+                <select id="statusFilter">
+                    <option value="">全部状态</option>
+                    <option value="撰写中">撰写中</option>
+                    <option value="规划中">规划中</option>
+                    <option value="已投稿">已投稿</option>
+                    <option value="审稿中">审稿中</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="edit-notice">
+            <i class="fas fa-info-circle"></i> 提示：点击论文题目或期刊名称可直接编辑，编辑后点击"保存"按钮确认更改
+        </div>
+        
+        <div style="overflow-x: auto;">
+            <table id="thesisTable">
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>年级</th>
+                        <th>论文题目</th>
+                        <th>投稿期刊</th>
+                        <th>拟投稿时间</th>
+                        <th>目前状态</th>
+                        <th>进度</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- 表格数据将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <footer>
+            <p>论文进度追踪系统 &copy; 2025 | 最后更新: 2025-01-15 | 数据来源: 论文计划.xlsx</p>
+            <p style="margin-top: 5px; font-size: 12px; color: #888;">共 <span id="totalCount">34</span> 篇论文，其中 <span id="writingCount">5</span> 篇撰写中，<span id="submittedCount">6</span> 篇已投稿</p>
+        </footer>
+    </div>
 
-<h1>📘 课题组论文进度追踪系统</h1>
+    <script>
+        // 论文数据
+        const thesisData = [
+            { name: "王慧玲", grade: "博士后", title: "Cross-Scale view of stress-state dependent damage mechanisms in high-carbon steel: in-situ probing and a dislocation-damage CPFEM", journal: "International Journal of Plasticity", time: "2026-02", status: "撰写中", progress: 0.25 },
+            { name: "王慧玲", grade: "博士后", title: "A novel multiscale modeling to reveal damage mechanisms and law in cold ring rolling processes of high-carbon steel bearing rings", journal: "International Journal of Machine Tools and Manufacture", time: "2026-08", status: "规划中", progress: 0 },
+            { name: "程喆", grade: "博五", title: "Exploring the role of CSL grain boundaries in electrical resistivity changes of Fe under pulse current", journal: "Scripta Materialia", time: "2026-07", status: "规划中", progress: 0 },
+            { name: "王荣城", grade: "博四", title: "Atomic-scale mechanism of electric field facilitated grain boundary migration in TC11: An in-situ TEM and DFT study", journal: "暂未定", time: "2026-08", status: "规划中", progress: 0 },
+            { name: "杜宇辰", grade: "博三", title: "Achieving superior strength-toughness synergy in 2GPa bearing steel by bainite/martensite multiphase matching", journal: "Acta mater.", time: "2026-02", status: "已投稿", progress: 0.5 },
+            { name: "杜宇辰", grade: "博三", title: "Unraveling the Uniaxial Tensile Fracture Mechanism of Heterostructured Bearing Steel via Crystal Plasticity Finite Element Simulation Coupled with Microstructural Characterization", journal: "International Journal of Plasticity", time: "2026-07", status: "规划中", progress: 0 },
+            { name: "杜宇辰", grade: "博三", title: "Rolling contact fatigue behavior of bearing steel with martensite-bainite duplex structures of different strength-toughness combinations", journal: "Mater. lett.", time: "2026-05", status: "规划中", progress: 0 },
+            { name: "陈建城", grade: "博二", title: "Grain boundary structure stabilization via low-energy electropulsing enhances strength-ductility synergy", journal: "Science advance", time: "2026-01", status: "已投稿", progress: 0.5 },
+            { name: "陈建城", grade: "博二", title: "A physics-informed machine learning framework for quantifying current-induced atomic stress evolution in titanium", journal: "Materials today physic", time: "2026-05", status: "规划中", progress: 0 },
+            { name: "肖攀", grade: "博二", title: "待定", journal: "待定", time: "2026-06", status: "规划中", progress: 0 },
+            { name: "唐桂花", grade: "研三", title: "新能源汽车轴承套圈锻造过程流线演变与调控研究", journal: "中国机械工程", time: "2026-01", status: "撰写中", progress: 0.25 },
+            { name: "何亚妮", grade: "研三", title: "Stabilizing γ/γ' phase interface for improving high-temperature creep resistance of Nickel-based Superalloys via a novel electromagnetic shocking treatment", journal: "Acta mater.", time: "2026-02", status: "撰写中", progress: 0.25 },
+            { name: "宋正杰", grade: "研三", title: "Targeted effect and homogenized mechanism of microscopic residual stress of TC11 titanium alloys via electromagnetic shocking", journal: "Transactions of Nonferrous Metals Society of China", time: "2026-12", status: "已投稿", progress: 0.5 },
+            { name: "刘人珲", grade: "博一", title: "A Deep Learning Approach to Analyzing the Relationship Between Microstructure and Properties of Mar-Bainitic bearing steels", journal: "International Journal of Plasticity", time: "2026-09", status: "规划中", progress: 0 },
+            { name: "王佳琪", grade: "研一", title: "Enhanced Surface Wear Resistance of M50NiL Bearing Steel by Tailoring Dual-gradient Structure", journal: "Tribology International", time: "2026-09", status: "规划中", progress: 0 },
+            { name: "丁盛阳", grade: "研一", title: "Creep-Fatigue Evolution Mechanisms in Nickel-Based Single Crystal Superalloys under Electromagnetic Shock", journal: "scripta material", time: "2027-01", status: "规划中", progress: 0 },
+            { name: "易伟", grade: "研二", title: "High-quality interface bonding of 60NiTi and 100Cr6 heterogeneous materials achieved by combining laser cladding with electrically assisted", journal: "", time: "2026-04", status: "规划中", progress: 0 },
+            { name: "刘傲宇", grade: "研二", title: "Enhanced Strength-Ductility Synergy in TC11 Titanium Alloy via Harmonic Heterostructure Induced by Rapid Heating Deformation", journal: "Materials Science and Engineering: A", time: "2026-07", status: "规划中", progress: 0 },
+            { name: "陆云彬", grade: "博二", title: "Breakthrough in wear resistance by constructing the novel gradient dual Martensite/Bainite heterostructure in bearing steel", journal: "Tribology International", time: "2026-02", status: "撰写中", progress: 0.25 },
+            { name: "陆云彬", grade: "博二", title: "Enhancement of Wear Resistance via Dual Gradient Structural Design", journal: "acta", time: "2026-07", status: "规划中", progress: 0 },
+            { name: "刘耀东", grade: "研二", title: "待定", journal: "待定", time: "2026-09", status: "规划中", progress: 0 },
+            { name: "吴正焱", grade: "研二", title: "Random Forest-Based Optimization Design of the Rolling Process for Large Thin-Walled Titanium Alloy Rings", journal: "待定", time: "2026-09", status: "规划中", progress: 0 },
+            { name: "周雪", grade: "研二", title: "Inhibiting hydrogen-induced stress corrosion cracking via Electromagnetic Shocking induced surface structure stabilization", journal: "待定", time: "2026-09", status: "规划中", progress: 0 },
+            { name: "黄顺进", grade: "研一", title: "待定", journal: "待定", time: "2027-01", status: "规划中", progress: 0 },
+            { name: "薛逍", grade: "博一", title: "Research on Process Parameter Prediction of Large Ring Components Based on Digital Twin", journal: "待定", time: "2026-09", status: "规划中", progress: 0 },
+            { name: "沈子扬", grade: "研二", title: "Ti551钛合金热变形行为和热加工图研究", journal: "钢铁钒钛", time: "2026-01", status: "已投稿", progress: 0.5 },
+            { name: "谭美如", grade: "研一", title: "Improve the friction performance of aviation bearing steel via introducing gradient bainite.", journal: "wear", time: "2026-04", status: "撰写中", progress: 0.25 },
+            { name: "王天乐", grade: "研三", title: "钛合金薄壁环件制造过程残余应力与加工变形仿真分析与工艺优化", journal: "钢铁钒钛", time: "2026-01", status: "已投稿", progress: 0.5 },
+            { name: "张啸", grade: "博二", title: "待定", journal: "待定", time: "2026-07", status: "规划中", progress: 0 },
+            { name: "肖乐雨", grade: "研二", title: "Dissolution Mechanism and Prediction of Carbides in High-carbon Chromium Bearing Steel Subjected to Cold Rolling and Heat Treatment", journal: "待定", time: "2026-09", status: "规划中", progress: 0 },
+            { name: "宋佳龙", grade: "研二", title: "Interface bonding mechanism of Ti-551 during electrically assisted hot compression bonding", journal: "Materials Science and Engineering: A", time: "2026-04", status: "撰写中", progress: 0.25 },
+            { name: "刘再华", grade: "博一", title: "待定", journal: "待定", time: "2026-11", status: "规划中", progress: 0 },
+            { name: "孙梦黎", grade: "博五", title: "Time-dependent corrosion performance of the new-generation high-nitrogen bearing steel with heterostructure induced by prior cold rolling", journal: "surface and interface", time: "2026-01", status: "审稿中", progress: 0.75 },
+            { name: "陈艳", grade: "研一", title: "Correlation between Grain Boundary Atomic Rearrangement and Phonon States in PCBN Tools under Electromagnetic Field", journal: "待定", time: "2027-02", status: "规划中", progress: 0 }
+        ];
 
-<div class="card stats">
-  <div class="stat">总论文数<br><b id="total"></b></div>
-  <div class="stat">总学生数<br><b id="students"></b></div>
-  <div class="stat">已完成<br><b id="done"></b></div>
-  <div class="stat">平均进度<br><b id="avg"></b>%</div>
-</div>
-
-<div class="card">
-🔍 搜索：
-<input id="search" placeholder="姓名 / 年级 / 论文题目" />
-</div>
-
-<div class="card">
-<table>
-<thead>
-<tr>
-<th>姓名</th>
-<th>年级</th>
-<th>论文题目</th>
-<th>投稿期刊</th>
-<th>拟投稿时间</th>
-<th>状态</th>
-<th>进度</th>
-</tr>
-</thead>
-<tbody id="tbody"></tbody>
-</table>
-</div>
-
-<div class="card">
-<h3>➕ 新增成员</h3>
-<input id="new_name" placeholder="姓名">
-<input id="new_grade" placeholder="年级">
-<input id="new_title" placeholder="论文题目">
-<input id="new_journal" placeholder="投稿期刊">
-<input id="new_time" placeholder="拟投稿时间 (YYYY-MM)">
-<button onclick="addRow()">添加</button>
-</div>
-
-<script>
-// ========= 在这里填你的 Supabase =========
-const supabaseUrl = "https://你的项目ID.supabase.co"
-const supabaseKey = "你的 anon public key"
-// ========================================
-
-const supabase = supabase.createClient(supabaseUrl, supabaseKey)
-let allData = []
-
-async function loadData(){
-  const { data } = await supabase.from("papers").select("*")
-  allData = data || []
-  render(allData)
-  stats(allData)
-}
-
-function stats(data){
-  document.getElementById("total").innerText = data.length
-  document.getElementById("students").innerText = new Set(data.map(d=>d.姓名)).size
-  document.getElementById("done").innerText =
-    data.filter(d=>["已投稿","审阅中","已发表"].includes(d.目前状态)).length
-  document.getElementById("avg").innerText =
-    Math.round(data.reduce((a,b)=>a+(b.进度||0),0)/data.length || 0)
-}
-
-function render(data){
-  const tb = document.getElementById("tbody")
-  tb.innerHTML=""
-  data.forEach(d=>{
-    tb.innerHTML += `
-<tr>
-<td>${d.姓名}</td>
-<td>${d.年级}</td>
-<td><input value="${d.论文题目||""}" onchange="update(${d.id},'论文题目',this.value)"></td>
-<td><input value="${d.投稿期刊||""}" onchange="update(${d.id},'投稿期刊',this.value)"></td>
-<td>${d.拟投稿时间||""}</td>
-<td>
-<select onchange="update(${d.id},'目前状态',this.value)">
-${["规划中","撰写中","已投稿","审阅中","已发表"].map(s=>
-`<option ${s==d.目前状态?"selected":""}>${s}</option>`)}
-</select>
-</td>
-<td>
-<input type="range" min="0" max="100" value="${d.进度||0}"
-onchange="update(${d.id},'进度',this.value)">
-${d.进度||0}%
-</td>
-</tr>`
-  })
-}
-
-async function update(id,col,val){
-  await supabase.from("papers").update({[col]:val}).eq("id",id)
-  loadData()
-}
-
-async function addRow(){
-  await supabase.from("papers").insert({
-    姓名: new_name.value,
-    年级: new_grade.value,
-    论文题目: new_title.value,
-    投稿期刊: new_journal.value,
-    拟投稿时间: new_time.value,
-    目前状态: "规划中",
-    进度: 0
-  })
-  loadData()
-}
-
-document.getElementById("search").oninput = e=>{
-  const v = e.target.value
-  render(allData.filter(d=>JSON.stringify(d).includes(v)))
-}
-
-loadData()
-</script>
-
+        // 当前编辑的行索引和字段
+        let editingRow = -1;
+        let editingField = '';
+        
+        // 初始化表格
+        function renderTable(data) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                const progressPercent = Math.round(item.progress * 100);
+                
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td><span class="grade-tag grade-${item.grade}">${item.grade}</span></td>
+                    <td class="title-cell">
+                        <div class="editable" data-index="${index}" data-field="title">${item.title}</div>
+                    </td>
+                    <td class="journal-cell">
+                        <div class="editable" data-index="${index}" data-field="journal">${item.journal || '暂未定'}</div>
+                    </td>
+                    <td>${item.time}</td>
+                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                    <td class="progress-cell">
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                            </div>
+                            <div class="progress-text">${progressPercent}%</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn edit-btn" onclick="editRow(${index})">
+                                <i class="fas fa-edit"></i> 编辑
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // 更新统计信息
+            document.getElementById('totalCount').textContent = data.length;
+            const writingCount = data.filter(item => item.status === '撰写中').length;
+            const submittedCount = data.filter(item => item.status === '已投稿').length;
+            document.getElementById('writingCount').textContent = writingCount;
+            document.getElementById('submittedCount').textContent = submittedCount;
+            
+            // 添加编辑事件监听器
+            addEditListeners();
+        }
+        
+        // 添加编辑事件监听器
+        function addEditListeners() {
+            const editableElements = document.querySelectorAll('.editable');
+            editableElements.forEach(element => {
+                element.addEventListener('click', function(e) {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    const field = this.getAttribute('data-field');
+                    
+                    // 如果已经在编辑其他行，先保存
+                    if (editingRow !== -1 && editingRow !== index) {
+                        saveEdit();
+                    }
+                    
+                    startEditing(index, field, this);
+                });
+            });
+        }
+        
+        // 开始编辑
+        function startEditing(index, field, element) {
+            // 如果已经在编辑同一单元格，直接返回
+            if (editingRow === index && editingField === field) {
+                return;
+            }
+            
+            // 保存当前编辑的内容
+            if (editingRow !== -1) {
+                saveEdit();
+            }
+            
+            editingRow = index;
+            editingField = field;
+            
+            const currentValue = thesisData[index][field];
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'edit-input';
+            input.value = currentValue;
+            
+            // 替换内容为输入框
+            element.parentNode.innerHTML = '';
+            element.parentNode.appendChild(input);
+            input.focus();
+            
+            // 添加保存和取消按钮
+            const actionsCell = document.querySelector(`tr:nth-child(${index+1}) td:last-child`);
+            actionsCell.innerHTML = `
+                <div class="actions">
+                    <button class="action-btn save-btn" onclick="saveEdit()">
+                        <i class="fas fa-save"></i> 保存
+                    </button>
+                    <button class="action-btn cancel-btn" onclick="cancelEdit()">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            `;
+            
+            // 添加键盘事件
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    saveEdit();
+                } else if (e.key === 'Escape') {
+                    cancelEdit();
+                }
+            });
+        }
+        
+        // 编辑整行
+        function editRow(index) {
+            // 如果已经在编辑其他行，先保存
+            if (editingRow !== -1 && editingRow !== index) {
+                saveEdit();
+            }
+            
+            // 如果已经在编辑这一行，直接返回
+            if (editingRow === index) {
+                return;
+            }
+            
+            editingRow = index;
+            
+            // 获取当前行的所有单元格
+            const row = document.querySelector(`#tableBody tr:nth-child(${index+1})`);
+            const titleCell = row.querySelector('.title-cell');
+            const journalCell = row.querySelector('.journal-cell');
+            const actionsCell = row.querySelector('td:last-child');
+            
+            // 获取当前值
+            const currentTitle = thesisData[index].title;
+            const currentJournal = thesisData[index].journal;
+            
+            // 创建输入框
+            const titleInput = document.createElement('input');
+            titleInput.type = 'text';
+            titleInput.className = 'edit-input';
+            titleInput.value = currentTitle;
+            titleInput.setAttribute('data-field', 'title');
+            
+            const journalInput = document.createElement('input');
+            journalInput.type = 'text';
+            journalInput.className = 'edit-input';
+            journalInput.value = currentJournal;
+            journalInput.setAttribute('data-field', 'journal');
+            
+            // 替换内容
+            titleCell.innerHTML = '';
+            titleCell.appendChild(titleInput);
+            
+            journalCell.innerHTML = '';
+            journalCell.appendChild(journalInput);
+            
+            // 更新操作按钮
+            actionsCell.innerHTML = `
+                <div class="actions">
+                    <button class="action-btn save-btn" onclick="saveEdit()">
+                        <i class="fas fa-save"></i> 保存
+                    </button>
+                    <button class="action-btn cancel-btn" onclick="cancelEdit()">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            `;
+            
+            // 焦点放在标题输入框
+            titleInput.focus();
+            
+            // 添加键盘事件
+            titleInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    journalInput.focus();
+                }
+            });
+            
+            journalInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    saveEdit();
+                } else if (e.key === 'Escape') {
+                    cancelEdit();
+                }
+            });
+        }
+        
+        // 保存编辑
+        function saveEdit() {
+            if (editingRow === -1) return;
+            
+            const row = document.querySelector(`#tableBody tr:nth-child(${editingRow+1})`);
+            
+            // 如果是整行编辑模式
+            const titleInput = row.querySelector('.title-cell input');
+            const journalInput = row.querySelector('.journal-cell input');
+            
+            if (titleInput && journalInput) {
+                // 整行编辑模式
+                thesisData[editingRow].title = titleInput.value;
+                thesisData[editingRow].journal = journalInput.value;
+                
+                // 重新渲染该行
+                renderTableRow(editingRow);
+            } else if (editingField) {
+                // 单个字段编辑模式
+                const input = row.querySelector(`[data-field="${editingField}"] input`);
+                if (input) {
+                    thesisData[editingRow][editingField] = input.value;
+                    
+                    // 重新渲染该行
+                    renderTableRow(editingRow);
+                }
+            }
+            
+            editingRow = -1;
+            editingField = '';
+            
+            // 显示保存成功提示
+            showNotification('修改已保存', 'success');
+        }
+        
+        // 取消编辑
+        function cancelEdit() {
+            if (editingRow === -1) return;
+            
+            // 重新渲染该行，恢复原始数据
+            renderTableRow(editingRow);
+            
+            editingRow = -1;
+            editingField = '';
+        }
+        
+        // 渲染单行
+        function renderTableRow(index) {
+            const item = thesisData[index];
+            const row = document.querySelector(`#tableBody tr:nth-child(${index+1})`);
+            const progressPercent = Math.round(item.progress * 100);
+            
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td><span class="grade-tag grade-${item.grade}">${item.grade}</span></td>
+                <td class="title-cell">
+                    <div class="editable" data-index="${index}" data-field="title">${item.title}</div>
+                </td>
+                <td class="journal-cell">
+                    <div class="editable" data-index="${index}" data-field="journal">${item.journal || '暂未定'}</div>
+                </td>
+                <td>${item.time}</td>
+                <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                <td class="progress-cell">
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                        <div class="progress-text">${progressPercent}%</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="actions">
+                        <button class="action-btn edit-btn" onclick="editRow(${index})">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                    </div>
+                </td>
+            `;
+            
+            // 重新添加编辑事件监听器
+            addEditListeners();
+        }
+        
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            // 移除现有的通知
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            // 添加样式
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: ${type === 'success' ? '#d4edda' : '#d1ecf1'};
+                color: ${type === 'success' ? '#155724' : '#0c5460'};
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+                border-left: 4px solid ${type === 'success' ? '#28a745' : '#17a2b8'};
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+            
+            // 添加动画样式
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+        
+        // 搜索和过滤功能
+        function setupFilters() {
+            const searchInput = document.getElementById('searchInput');
+            const gradeFilter = document.getElementById('gradeFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            
+            function filterData() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedGrade = gradeFilter.value;
+                const selectedStatus = statusFilter.value;
+                
+                const filteredData = thesisData.filter(item => {
+                    // 搜索条件
+                    const matchesSearch = searchTerm === '' || 
+                        item.name.toLowerCase().includes(searchTerm) ||
+                        item.title.toLowerCase().includes(searchTerm) ||
+                        item.journal.toLowerCase().includes(searchTerm);
+                    
+                    // 年级条件
+                    const matchesGrade = selectedGrade === '' || item.grade === selectedGrade;
+                    
+                    // 状态条件
+                    const matchesStatus = selectedStatus === '' || item.status === selectedStatus;
+                    
+                    return matchesSearch && matchesGrade && matchesStatus;
+                });
+                
+                renderTable(filteredData);
+            }
+            
+            searchInput.addEventListener('input', filterData);
+            gradeFilter.addEventListener('change', filterData);
+            statusFilter.addEventListener('change', filterData);
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable(thesisData);
+            setupFilters();
+        });
+    </script>
 </body>
 </html>
