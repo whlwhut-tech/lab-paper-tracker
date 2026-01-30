@@ -21,7 +21,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background-color: #fff;
             border-radius: 12px;
@@ -141,6 +141,28 @@
             border-color: #1a6dcc;
         }
         
+        .add-new-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        
+        .add-new-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -178,7 +200,7 @@
         }
         
         .progress-cell {
-            min-width: 200px;
+            min-width: 220px;
         }
         
         .progress-container {
@@ -217,6 +239,12 @@
             display: inline-block;
             text-align: center;
             min-width: 80px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .status-badge:hover {
+            transform: translateY(-2px);
         }
         
         .status-撰写中 {
@@ -335,6 +363,16 @@
             color: white;
         }
         
+        .delete-btn {
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+        
+        .delete-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        
         footer {
             padding: 20px 30px;
             text-align: center;
@@ -366,7 +404,7 @@
                 align-items: stretch;
             }
             
-            .search-box, select {
+            .search-box, select, .add-new-btn {
                 min-width: 100%;
             }
             
@@ -378,6 +416,10 @@
             .progress-cell {
                 min-width: 150px;
             }
+            
+            .actions {
+                flex-wrap: wrap;
+            }
         }
         
         .edit-notice {
@@ -388,6 +430,195 @@
             font-size: 14px;
             color: #666;
             border-left: 4px solid #1a6dcc;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #777;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .close-modal:hover {
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #1a6dcc;
+            box-shadow: 0 0 0 2px rgba(26, 109, 204, 0.2);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #1a6dcc;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1559b0;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .progress-slider {
+            width: 100%;
+            height: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e9ecef;
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        .progress-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1a6dcc;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .progress-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1a6dcc;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .slider-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .status-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        
+        .status-select:focus {
+            outline: none;
+            border-color: #1a6dcc;
         }
     </style>
 </head>
@@ -448,11 +679,15 @@
                     <option value="已投稿">已投稿</option>
                     <option value="审稿中">审稿中</option>
                 </select>
+                
+                <button class="add-new-btn" id="addNewBtn">
+                    <i class="fas fa-plus"></i> 添加新论文
+                </button>
             </div>
         </div>
         
         <div class="edit-notice">
-            <i class="fas fa-info-circle"></i> 提示：点击论文题目或期刊名称可直接编辑，编辑后点击"保存"按钮确认更改
+            <i class="fas fa-info-circle"></i> 提示：点击论文题目或期刊名称可直接编辑，点击状态标签可更改状态，点击进度条可调整进度，编辑后点击"保存"按钮确认更改
         </div>
         
         <div style="overflow-x: auto;">
@@ -476,14 +711,89 @@
         </div>
         
         <footer>
-            <p>论文进度追踪系统 &copy; 2025 | 最后更新: 2025-01-15 | 数据来源: 论文计划.xlsx</p>
+            <p>论文进度追踪系统 &copy; 2025 | 最后更新: <span id="lastUpdateDate">2025-01-15</span> | 数据来源: 论文计划.xlsx</p>
             <p style="margin-top: 5px; font-size: 12px; color: #888;">共 <span id="totalCount">34</span> 篇论文，其中 <span id="writingCount">5</span> 篇撰写中，<span id="submittedCount">6</span> 篇已投稿</p>
         </footer>
     </div>
 
+    <!-- 添加新论文模态框 -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="fas fa-plus-circle"></i> 添加新论文</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            
+            <form id="addForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newName">姓名 *</label>
+                        <input type="text" id="newName" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newGrade">年级 *</label>
+                        <select id="newGrade" class="form-control" required>
+                            <option value="">选择年级</option>
+                            <option value="博士后">博士后</option>
+                            <option value="博五">博五</option>
+                            <option value="博四">博四</option>
+                            <option value="博三">博三</option>
+                            <option value="博二">博二</option>
+                            <option value="博一">博一</option>
+                            <option value="研三">研三</option>
+                            <option value="研二">研二</option>
+                            <option value="研一">研一</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newTitle">论文题目 *</label>
+                    <input type="text" id="newTitle" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newJournal">投稿期刊</label>
+                    <input type="text" id="newJournal" class="form-control" placeholder="暂未定">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newTime">拟投稿时间</label>
+                        <input type="text" id="newTime" class="form-control" placeholder="YYYY-MM" value="2026-01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newStatus">状态 *</label>
+                        <select id="newStatus" class="form-control" required>
+                            <option value="规划中">规划中</option>
+                            <option value="撰写中">撰写中</option>
+                            <option value="已投稿">已投稿</option>
+                            <option value="审稿中">审稿中</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newProgress">进度</label>
+                    <div class="slider-container">
+                        <input type="range" id="newProgress" class="progress-slider" min="0" max="100" value="0">
+                        <span class="slider-value" id="progressValue">0%</span>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAdd">取消</button>
+                    <button type="submit" class="btn btn-primary">添加论文</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // 论文数据
-        const thesisData = [
+        let thesisData = [
             { name: "王慧玲", grade: "博士后", title: "Cross-Scale view of stress-state dependent damage mechanisms in high-carbon steel: in-situ probing and a dislocation-damage CPFEM", journal: "International Journal of Plasticity", time: "2026-02", status: "撰写中", progress: 0.25 },
             { name: "王慧玲", grade: "博士后", title: "A novel multiscale modeling to reveal damage mechanisms and law in cold ring rolling processes of high-carbon steel bearing rings", journal: "International Journal of Machine Tools and Manufacture", time: "2026-08", status: "规划中", progress: 0 },
             { name: "程喆", grade: "博五", title: "Exploring the role of CSL grain boundaries in electrical resistivity changes of Fe under pulse current", journal: "Scripta Materialia", time: "2026-07", status: "规划中", progress: 0 },
@@ -542,10 +852,16 @@
                     <td class="journal-cell">
                         <div class="editable" data-index="${index}" data-field="journal">${item.journal || '暂未定'}</div>
                     </td>
-                    <td>${item.time}</td>
-                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                    <td>
+                        <div class="editable" data-index="${index}" data-field="time">${item.time}</div>
+                    </td>
+                    <td>
+                        <div class="status-badge status-${item.status}" data-index="${index}" data-field="status">
+                            ${item.status}
+                        </div>
+                    </td>
                     <td class="progress-cell">
-                        <div class="progress-container">
+                        <div class="progress-container" data-index="${index}" data-field="progress">
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${progressPercent}%"></div>
                             </div>
@@ -557,6 +873,9 @@
                             <button class="action-btn edit-btn" onclick="editRow(${index})">
                                 <i class="fas fa-edit"></i> 编辑
                             </button>
+                            <button class="action-btn delete-btn" onclick="deleteRow(${index})">
+                                <i class="fas fa-trash"></i> 删除
+                            </button>
                         </div>
                     </td>
                 `;
@@ -565,18 +884,34 @@
             });
             
             // 更新统计信息
-            document.getElementById('totalCount').textContent = data.length;
-            const writingCount = data.filter(item => item.status === '撰写中').length;
-            const submittedCount = data.filter(item => item.status === '已投稿').length;
-            document.getElementById('writingCount').textContent = writingCount;
-            document.getElementById('submittedCount').textContent = submittedCount;
+            updateStats(data);
             
             // 添加编辑事件监听器
             addEditListeners();
         }
         
+        // 更新统计数据
+        function updateStats(data) {
+            document.getElementById('totalCount').textContent = data.length;
+            const writingCount = data.filter(item => item.status === '撰写中').length;
+            const submittedCount = data.filter(item => item.status === '已投稿').length;
+            const reviewingCount = data.filter(item => item.status === '审稿中').length;
+            const planningCount = data.filter(item => item.status === '规划中').length;
+            
+            document.getElementById('writingCount').textContent = writingCount;
+            document.getElementById('submittedCount').textContent = submittedCount;
+            
+            // 更新头部统计
+            document.querySelector('.stats .stat-box:nth-child(1) .stat-number').textContent = data.length;
+            document.querySelector('.stats .stat-box:nth-child(2) .stat-number').textContent = submittedCount;
+            document.querySelector('.stats .stat-box:nth-child(3) .stat-number').textContent = writingCount;
+            document.querySelector('.stats .stat-box:nth-child(4) .stat-number').textContent = reviewingCount;
+            document.querySelector('.stats .stat-box:nth-child(5) .stat-number').textContent = planningCount;
+        }
+        
         // 添加编辑事件监听器
         function addEditListeners() {
+            // 文本字段编辑
             const editableElements = document.querySelectorAll('.editable');
             editableElements.forEach(element => {
                 element.addEventListener('click', function(e) {
@@ -591,9 +926,43 @@
                     startEditing(index, field, this);
                 });
             });
+            
+            // 状态编辑
+            const statusElements = document.querySelectorAll('.status-badge');
+            statusElements.forEach(element => {
+                element.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const index = parseInt(this.getAttribute('data-index'));
+                    const field = this.getAttribute('data-field');
+                    
+                    // 如果已经在编辑其他行，先保存
+                    if (editingRow !== -1 && editingRow !== index) {
+                        saveEdit();
+                    }
+                    
+                    editStatus(index, this);
+                });
+            });
+            
+            // 进度编辑
+            const progressElements = document.querySelectorAll('.progress-container');
+            progressElements.forEach(element => {
+                element.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const index = parseInt(this.getAttribute('data-index'));
+                    const field = this.getAttribute('data-field');
+                    
+                    // 如果已经在编辑其他行，先保存
+                    if (editingRow !== -1 && editingRow !== index) {
+                        saveEdit();
+                    }
+                    
+                    editProgress(index, this);
+                });
+            });
         }
         
-        // 开始编辑
+        // 开始编辑文本字段
         function startEditing(index, field, element) {
             // 如果已经在编辑同一单元格，直接返回
             if (editingRow === index && editingField === field) {
@@ -642,6 +1011,118 @@
             });
         }
         
+        // 编辑状态
+        function editStatus(index, element) {
+            // 如果已经在编辑同一单元格，直接返回
+            if (editingRow === index && editingField === 'status') {
+                return;
+            }
+            
+            // 保存当前编辑的内容
+            if (editingRow !== -1) {
+                saveEdit();
+            }
+            
+            editingRow = index;
+            editingField = 'status';
+            
+            const currentValue = thesisData[index].status;
+            const select = document.createElement('select');
+            select.className = 'status-select';
+            
+            const statuses = ['规划中', '撰写中', '已投稿', '审稿中'];
+            statuses.forEach(status => {
+                const option = document.createElement('option');
+                option.value = status;
+                option.textContent = status;
+                if (status === currentValue) option.selected = true;
+                select.appendChild(option);
+            });
+            
+            // 替换内容为下拉框
+            element.parentNode.innerHTML = '';
+            element.parentNode.appendChild(select);
+            select.focus();
+            
+            // 添加保存和取消按钮
+            const actionsCell = document.querySelector(`tr:nth-child(${index+1}) td:last-child`);
+            actionsCell.innerHTML = `
+                <div class="actions">
+                    <button class="action-btn save-btn" onclick="saveEdit()">
+                        <i class="fas fa-save"></i> 保存
+                    </button>
+                    <button class="action-btn cancel-btn" onclick="cancelEdit()">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            `;
+            
+            // 添加键盘事件
+            select.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    saveEdit();
+                } else if (e.key === 'Escape') {
+                    cancelEdit();
+                }
+            });
+        }
+        
+        // 编辑进度
+        function editProgress(index, element) {
+            // 如果已经在编辑同一单元格，直接返回
+            if (editingRow === index && editingField === 'progress') {
+                return;
+            }
+            
+            // 保存当前编辑的内容
+            if (editingRow !== -1) {
+                saveEdit();
+            }
+            
+            editingRow = index;
+            editingField = 'progress';
+            
+            const currentValue = thesisData[index].progress * 100;
+            const container = document.createElement('div');
+            container.className = 'slider-container';
+            
+            const slider = document.createElement('input');
+            slider.type = 'range';
+            slider.className = 'progress-slider';
+            slider.min = '0';
+            slider.max = '100';
+            slider.value = currentValue;
+            
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'slider-value';
+            valueSpan.textContent = `${Math.round(currentValue)}%`;
+            
+            container.appendChild(slider);
+            container.appendChild(valueSpan);
+            
+            // 更新显示值
+            slider.addEventListener('input', function() {
+                valueSpan.textContent = `${this.value}%`;
+            });
+            
+            // 替换内容为滑块
+            element.parentNode.innerHTML = '';
+            element.parentNode.appendChild(container);
+            
+            // 添加保存和取消按钮
+            const actionsCell = document.querySelector(`tr:nth-child(${index+1}) td:last-child`);
+            actionsCell.innerHTML = `
+                <div class="actions">
+                    <button class="action-btn save-btn" onclick="saveEdit()">
+                        <i class="fas fa-save"></i> 保存
+                    </button>
+                    <button class="action-btn cancel-btn" onclick="cancelEdit()">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            `;
+        }
+        
         // 编辑整行
         function editRow(index) {
             // 如果已经在编辑其他行，先保存
@@ -660,24 +1141,68 @@
             const row = document.querySelector(`#tableBody tr:nth-child(${index+1})`);
             const titleCell = row.querySelector('.title-cell');
             const journalCell = row.querySelector('.journal-cell');
+            const timeCell = row.querySelector('td:nth-child(5)');
+            const statusCell = row.querySelector('td:nth-child(6)');
+            const progressCell = row.querySelector('.progress-cell');
             const actionsCell = row.querySelector('td:last-child');
             
             // 获取当前值
             const currentTitle = thesisData[index].title;
             const currentJournal = thesisData[index].journal;
+            const currentTime = thesisData[index].time;
+            const currentStatus = thesisData[index].status;
+            const currentProgress = thesisData[index].progress * 100;
             
-            // 创建输入框
+            // 创建标题输入框
             const titleInput = document.createElement('input');
             titleInput.type = 'text';
             titleInput.className = 'edit-input';
             titleInput.value = currentTitle;
-            titleInput.setAttribute('data-field', 'title');
             
+            // 创建期刊输入框
             const journalInput = document.createElement('input');
             journalInput.type = 'text';
             journalInput.className = 'edit-input';
             journalInput.value = currentJournal;
-            journalInput.setAttribute('data-field', 'journal');
+            
+            // 创建时间输入框
+            const timeInput = document.createElement('input');
+            timeInput.type = 'text';
+            timeInput.className = 'edit-input';
+            timeInput.value = currentTime;
+            timeInput.placeholder = 'YYYY-MM';
+            
+            // 创建状态下拉框
+            const statusSelect = document.createElement('select');
+            statusSelect.className = 'status-select';
+            const statuses = ['规划中', '撰写中', '已投稿', '审稿中'];
+            statuses.forEach(status => {
+                const option = document.createElement('option');
+                option.value = status;
+                option.textContent = status;
+                if (status === currentStatus) option.selected = true;
+                statusSelect.appendChild(option);
+            });
+            
+            // 创建进度滑块
+            const progressContainer = document.createElement('div');
+            progressContainer.className = 'slider-container';
+            const progressSlider = document.createElement('input');
+            progressSlider.type = 'range';
+            progressSlider.className = 'progress-slider';
+            progressSlider.min = '0';
+            progressSlider.max = '100';
+            progressSlider.value = currentProgress;
+            const progressValue = document.createElement('span');
+            progressValue.className = 'slider-value';
+            progressValue.textContent = `${Math.round(currentProgress)}%`;
+            
+            progressSlider.addEventListener('input', function() {
+                progressValue.textContent = `${this.value}%`;
+            });
+            
+            progressContainer.appendChild(progressSlider);
+            progressContainer.appendChild(progressValue);
             
             // 替换内容
             titleCell.innerHTML = '';
@@ -685,6 +1210,15 @@
             
             journalCell.innerHTML = '';
             journalCell.appendChild(journalInput);
+            
+            timeCell.innerHTML = '';
+            timeCell.appendChild(timeInput);
+            
+            statusCell.innerHTML = '';
+            statusCell.appendChild(statusSelect);
+            
+            progressCell.innerHTML = '';
+            progressCell.appendChild(progressContainer);
             
             // 更新操作按钮
             actionsCell.innerHTML = `
@@ -700,21 +1234,6 @@
             
             // 焦点放在标题输入框
             titleInput.focus();
-            
-            // 添加键盘事件
-            titleInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    journalInput.focus();
-                }
-            });
-            
-            journalInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    saveEdit();
-                } else if (e.key === 'Escape') {
-                    cancelEdit();
-                }
-            });
         }
         
         // 保存编辑
@@ -726,21 +1245,39 @@
             // 如果是整行编辑模式
             const titleInput = row.querySelector('.title-cell input');
             const journalInput = row.querySelector('.journal-cell input');
+            const timeInput = row.querySelector('td:nth-child(5) input');
+            const statusSelect = row.querySelector('td:nth-child(6) select');
+            const progressSlider = row.querySelector('.progress-cell input[type="range"]');
             
-            if (titleInput && journalInput) {
+            if (titleInput && journalInput && timeInput && statusSelect && progressSlider) {
                 // 整行编辑模式
                 thesisData[editingRow].title = titleInput.value;
                 thesisData[editingRow].journal = journalInput.value;
+                thesisData[editingRow].time = timeInput.value;
+                thesisData[editingRow].status = statusSelect.value;
+                thesisData[editingRow].progress = parseInt(progressSlider.value) / 100;
                 
                 // 重新渲染该行
                 renderTableRow(editingRow);
+            } else if (editingField === 'status') {
+                // 状态编辑模式
+                const select = row.querySelector('td:nth-child(6) select');
+                if (select) {
+                    thesisData[editingRow].status = select.value;
+                    renderTableRow(editingRow);
+                }
+            } else if (editingField === 'progress') {
+                // 进度编辑模式
+                const slider = row.querySelector('.progress-cell input[type="range"]');
+                if (slider) {
+                    thesisData[editingRow].progress = parseInt(slider.value) / 100;
+                    renderTableRow(editingRow);
+                }
             } else if (editingField) {
                 // 单个字段编辑模式
                 const input = row.querySelector(`[data-field="${editingField}"] input`);
                 if (input) {
                     thesisData[editingRow][editingField] = input.value;
-                    
-                    // 重新渲染该行
                     renderTableRow(editingRow);
                 }
             }
@@ -750,6 +1287,7 @@
             
             // 显示保存成功提示
             showNotification('修改已保存', 'success');
+            updateLastUpdateDate();
         }
         
         // 取消编辑
@@ -761,6 +1299,16 @@
             
             editingRow = -1;
             editingField = '';
+        }
+        
+        // 删除行
+        function deleteRow(index) {
+            if (confirm(`确定要删除 ${thesisData[index].name} 的论文 "${thesisData[index].title}" 吗？`)) {
+                thesisData.splice(index, 1);
+                renderTable(thesisData);
+                showNotification('论文已删除', 'success');
+                updateLastUpdateDate();
+            }
         }
         
         // 渲染单行
@@ -778,10 +1326,16 @@
                 <td class="journal-cell">
                     <div class="editable" data-index="${index}" data-field="journal">${item.journal || '暂未定'}</div>
                 </td>
-                <td>${item.time}</td>
-                <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                <td>
+                    <div class="editable" data-index="${index}" data-field="time">${item.time}</div>
+                </td>
+                <td>
+                    <div class="status-badge status-${item.status}" data-index="${index}" data-field="status">
+                        ${item.status}
+                    </div>
+                </td>
                 <td class="progress-cell">
-                    <div class="progress-container">
+                    <div class="progress-container" data-index="${index}" data-field="progress">
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${progressPercent}%"></div>
                         </div>
@@ -792,6 +1346,9 @@
                     <div class="actions">
                         <button class="action-btn edit-btn" onclick="editRow(${index})">
                             <i class="fas fa-edit"></i> 编辑
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteRow(${index})">
+                            <i class="fas fa-trash"></i> 删除
                         </button>
                     </div>
                 </td>
@@ -860,6 +1417,15 @@
             }
         }
         
+        // 更新最后更新日期
+        function updateLastUpdateDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            document.getElementById('lastUpdateDate').textContent = `${year}-${month}-${day}`;
+        }
+        
         // 搜索和过滤功能
         function setupFilters() {
             const searchInput = document.getElementById('searchInput');
@@ -876,7 +1442,7 @@
                     const matchesSearch = searchTerm === '' || 
                         item.name.toLowerCase().includes(searchTerm) ||
                         item.title.toLowerCase().includes(searchTerm) ||
-                        item.journal.toLowerCase().includes(searchTerm);
+                        (item.journal && item.journal.toLowerCase().includes(searchTerm));
                     
                     // 年级条件
                     const matchesGrade = selectedGrade === '' || item.grade === selectedGrade;
@@ -895,10 +1461,82 @@
             statusFilter.addEventListener('change', filterData);
         }
         
+        // 添加新论文功能
+        function setupAddNewFeature() {
+            const addModal = document.getElementById('addModal');
+            const addBtn = document.getElementById('addNewBtn');
+            const closeModal = document.getElementById('closeModal');
+            const cancelAdd = document.getElementById('cancelAdd');
+            const addForm = document.getElementById('addForm');
+            const progressSlider = document.getElementById('newProgress');
+            const progressValue = document.getElementById('progressValue');
+            
+            // 打开模态框
+            addBtn.addEventListener('click', function() {
+                addModal.style.display = 'flex';
+                document.getElementById('newName').focus();
+            });
+            
+            // 关闭模态框
+            closeModal.addEventListener('click', function() {
+                addModal.style.display = 'none';
+                addForm.reset();
+            });
+            
+            cancelAdd.addEventListener('click', function() {
+                addModal.style.display = 'none';
+                addForm.reset();
+            });
+            
+            // 点击模态框背景关闭
+            addModal.addEventListener('click', function(e) {
+                if (e.target === addModal) {
+                    addModal.style.display = 'none';
+                    addForm.reset();
+                }
+            });
+            
+            // 更新进度值显示
+            progressSlider.addEventListener('input', function() {
+                progressValue.textContent = `${this.value}%`;
+            });
+            
+            // 提交表单
+            addForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newPaper = {
+                    name: document.getElementById('newName').value,
+                    grade: document.getElementById('newGrade').value,
+                    title: document.getElementById('newTitle').value,
+                    journal: document.getElementById('newJournal').value || '待定',
+                    time: document.getElementById('newTime').value || '2026-01',
+                    status: document.getElementById('newStatus').value,
+                    progress: parseInt(document.getElementById('newProgress').value) / 100
+                };
+                
+                // 添加到数据数组
+                thesisData.push(newPaper);
+                
+                // 关闭模态框
+                addModal.style.display = 'none';
+                addForm.reset();
+                
+                // 重新渲染表格
+                renderTable(thesisData);
+                
+                // 显示成功消息
+                showNotification(`成功添加 ${newPaper.name} 的新论文`, 'success');
+                updateLastUpdateDate();
+            });
+        }
+        
         // 初始化页面
         document.addEventListener('DOMContentLoaded', function() {
             renderTable(thesisData);
             setupFilters();
+            setupAddNewFeature();
+            updateLastUpdateDate();
         });
     </script>
 </body>
